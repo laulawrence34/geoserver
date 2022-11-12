@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 # docker build --build-arg GS_VERSION=2.21.2 -t geoserver:2.21.2 .
 ARG TOMCAT_VERSION=9.0.68
 ARG GS_VERSION=2.22-RC
-ARG GS_DATA_PATH=./geoserver_data/
+ARG GS_DATA_PATH=geoserver_data/
 ARG ADDITIONAL_LIBS_PATH=./additional_libs/
 ARG ADDITIONAL_FONTS_PATH=./additional_fonts/
 ARG CORS_ENABLED=false
@@ -71,10 +71,9 @@ RUN wget -q -O /tmp/geoserver.zip https://downloads.sourceforge.net/project/geos
     mv $CATALINA_HOME/webapps/geoserver/WEB-INF/lib/marlin-0.9.3.jar $CATALINA_HOME/lib/marlin.jar && \
     mkdir -p $GEOSERVER_DATA_DIR
 
-#COPY $GS_DATA_PATH $GEOSERVER_DATA_DIR
-RUN ls $GEOSERVER_DATA_DIR
-COPY $ADDITIONAL_LIBS_PATH $GEOSERVER_LIB_DIR
-COPY $ADDITIONAL_FONTS_PATH /usr/share/fonts/truetype/
+COPY $GS_DATA_PATH $GEOSERVER_DATA_DIR
+#COPY $ADDITIONAL_LIBS_PATH $GEOSERVER_LIB_DIR
+#COPY $ADDITIONAL_FONTS_PATH /usr/share/fonts/truetype/
 
 # cleanup
 RUN apt purge -y && \

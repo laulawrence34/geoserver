@@ -72,6 +72,7 @@ RUN wget -q -O /tmp/geoserver.zip https://downloads.sourceforge.net/project/geos
     mkdir -p $GEOSERVER_DATA_DIR
 
 #COPY $GS_DATA_PATH $GEOSERVER_DATA_DIR
+RUN ls $GEOSERVER_DATA_DIR
 COPY $ADDITIONAL_LIBS_PATH $GEOSERVER_LIB_DIR
 COPY $ADDITIONAL_FONTS_PATH /usr/share/fonts/truetype/
 

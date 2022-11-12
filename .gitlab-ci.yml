@@ -28,6 +28,6 @@ deploy:
     - ssh -i $ID_RSA -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_IP "docker run -d -p 80:80 --name my-app $TAG_COMMIT". . .
   environment:
     name: production
-    url: 147.182.155.99
+    url: http://147.182.155.99
   only:
     - main

@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 # The GS_VERSION argument could be used like this to overwrite the default:
 # docker build --build-arg GS_VERSION=2.21.2 -t geoserver:2.21.2 .

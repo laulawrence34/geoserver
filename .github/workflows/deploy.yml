@@ -15,7 +15,7 @@ on:
         required: true
 #2
 env:
-  REGISTRY: "http://147.182.155.99"
+  REGISTRY: "registry.digitalocean.com/geoserver"
   IMAGE_NAME: "geoserver-production"
 
 #3

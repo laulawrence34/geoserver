@@ -14,6 +14,7 @@ ARG CORS_ALLOWED_HEADERS=*
 ARG STABLE_PLUGIN_URL=https://downloads.sourceforge.net/project/geoserver/GeoServer/${GS_VERSION}/extensions
 
 # Environment variables
+ENV GEOSERVER_DATA_DIR=/var/lib/geoserver_data
 ENV CATALINA_HOME=/opt/apache-tomcat-${TOMCAT_VERSION}
 ENV GEOSERVER_VERSION=$GS_VERSION
 ENV GEOSERVER_DATA_DIR=/opt/geoserver_data/

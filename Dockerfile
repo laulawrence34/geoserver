@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 # docker build --build-arg GS_VERSION=2.21.2 -t geoserver:2.21.2 .
 ARG TOMCAT_VERSION=9.0.68
 ARG GS_VERSION=2.22-RC
-ARG GS_DATA_PATH=geoserver_data/
+ARG GS_DATA_PATH=./geoserver_data/
 ARG ADDITIONAL_LIBS_PATH=./additional_libs/
 ARG ADDITIONAL_FONTS_PATH=./additional_fonts/
 ARG CORS_ENABLED=false
@@ -14,7 +14,7 @@ ARG CORS_ALLOWED_HEADERS=*
 ARG STABLE_PLUGIN_URL=https://downloads.sourceforge.net/project/geoserver/GeoServer/${GS_VERSION}/extensions
 
 # Environment variables
-ENV GEOSERVER_DATA_DIR=/var/lib/geoserver_data
+
 ENV CATALINA_HOME=/opt/apache-tomcat-${TOMCAT_VERSION}
 ENV GEOSERVER_VERSION=$GS_VERSION
 ENV GEOSERVER_DATA_DIR=/opt/geoserver_data/
@@ -72,8 +72,8 @@ RUN wget -q -O /tmp/geoserver.zip https://downloads.sourceforge.net/project/geos
     mkdir -p $GEOSERVER_DATA_DIR
 
 COPY $GS_DATA_PATH $GEOSERVER_DATA_DIR
-#COPY $ADDITIONAL_LIBS_PATH $GEOSERVER_LIB_DIR
-#COPY $ADDITIONAL_FONTS_PATH /usr/share/fonts/truetype/
+COPY $ADDITIONAL_LIBS_PATH $GEOSERVER_LIB_DIR
+COPY $ADDITIONAL_FONTS_PATH /usr/share/fonts/truetype/
 
 # cleanup
 RUN apt purge -y && \

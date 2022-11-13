@@ -28,8 +28,6 @@ docker run -it -p 80:8080 docker.osgeo.org/geoserver:2.21.1
 Check http://localhost/geoserver to see the geoserver page,
 and login with geoserver default `admin:geoserver` credentials.
 
-**IMPORTANT NOTE:** Please change the default ``geoserver`` and ``master`` passwords.
-
 ### How to mount an external folder for use as a data directory
 
 To use an external folder as your geoserver data directory.

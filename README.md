@@ -1,6 +1,6 @@
 # A geoserver docker image
 
-This Dockerfile can be used to create images for all geoserver versions since 2.5.
+This Dockerfile will install the following dependencies:
 
 * Debian based Linux
 * OpenJDK 11

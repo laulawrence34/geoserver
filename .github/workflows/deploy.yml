@@ -17,11 +17,12 @@ on:
 env:
   REGISTRY: ${{ secrets.REGISTRY }}
   IMAGE_NAME: "geoserver-production"
+  UBUNTU_VERSION: ${{ secrets.UBUNTU_VERSION }}
 
 #3
 jobs:
   build_and_push:
-    runs-on: ${{ secrets.UBUNTU_VERSION }}
+    runs-on: $UBUNTU_VERSION
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v2
@@ -44,7 +45,7 @@ jobs:
         run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
 
   deploy:
-    runs-on: ${{ secrets.UBUNTU_VERSION }}
+    runs-on: $UBUNTU_VERSION
     needs: build_and_push
 
     steps:

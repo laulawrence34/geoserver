@@ -39,9 +39,10 @@ First you will need to clone this repository and then setup the following secret
 **USERNAME:** the username of your SSH user to access Digital Ocean server<br />
 **PASSPHRASE:** the passphrase used for your SSH user<br />
 **REGISTRY:** the url for your Digital Ocean "Container Registry" <br />
-**UBUNTU_VERSION:** for the Ubuntu version that you want to use, eg. "ubuntu-latest" or "ubuntu-22.04"
+~~**~~UBUNTU_VERSION:~~** for the Ubuntu version that you want to use, eg. "ubuntu-latest" or "ubuntu-22.04"~~
 
-Note: your **UBUNTU_VERSION** secret should correspond to the version number in the **UBUNTU_VERSION** variable in the Dockerfile as well.
+~~Note: your **~~UBUNTU_VERSION~~** secret should correspond to the version number in the **UBUNTU_VERSION** variable in the Dockerfile as well.~~
+Unfortunately, I could not get the Ubuntu version parameterized using a secret in the Github workflow, so if you need to change the Ubuntu version in the Github action file: deploy.yml you will need to explicitly specify the Ubuntu version, eg. "ubuntu-22.04" in the "runs-on" parameter for the "build_and_push" and the "deploy" job. You can however change the ubuntu version in the Dockerfile on line 1.
 
 If you are using Ubuntu 22.04 version, there is an issue related to openssh 8.8p1-1 and up not accepting ssh-rsa key types by default and the workaround is to add "PubkeyAcceptedKeyTypes=+ssh-rsa" to your /etc/ssh/sshd_config file on the host server: https://github.com/appleboy/ssh-action/issues/157
 

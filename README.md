@@ -28,186 +28,32 @@ docker run -it -p 80:8080 docker.osgeo.org/geoserver:2.21.1
 Check http://localhost/geoserver to see the geoserver page,
 and login with geoserver default `admin:geoserver` credentials.
 
+### How to build and deploy this image to a Digital Ocean enviornment
+
+The following outline the steps to create a CI/CD with Docker, GiHub Actions, & Digital Ocean (Droplet + Container Registry).
+First you will need to clone this repository and then setup the following secrets in your Github repo:
+
+DIGITALOCEAN_ACCESS_TOKEN: created in your Digital Ocean account
+HOST: the url of your Digital Ocean "droplet"
+SSHKEY: created using ssh-keygen on your "droplet"
+USERNAME: the username of your SSH user to access Digital Ocean server
+PASSPHRASE: the passphrase used for your SSH user
+REGISTRY: the url for your Digital Ocean "Container Registry" 
+UBUNTU_VERSION: for the Ubuntu version that you want to use, eg. "ubuntu-latest" or "ubuntu-22.04"
+
+Note: your UBUNTU_VERSION should match the UBUNTU_VERSION in the Dockerfile as well.
+
+If you are using Ubuntu 22.04 version, there is an issue related to openssh 8.8p1-1 and up not accepting ssh-rsa key types by default and the workaround is to add "PubkeyAcceptedKeyTypes=+ssh-rsa" to your /etc/ssh/sshd_config file on the host server: https://github.com/appleboy/ssh-action/issues/157
+
+
 ### How to mount an external folder for use as a data directory
 
-To use an external folder as your geoserver data directory.
-
-
-```
-docker run -it -p 80:8080 \
-  --mount src="/absolute/path/on/host",target=/opt/geoserver_data/,type=bind \
-  docker.osgeo.org/geoserver:2.21.1
-```
-
-An empty data directory will be populated on first use. You can easily update GeoServer while
-using the same data directory.
-
-### How to start a GeoServer without sample data?
-
-This image populates ``/opt/geoserver_data/`` with demo data by default. For production scenarios this is typically not desired.
-
-The environment variable `SKIP_DEMO_DATA` can be set to `true` to create an empty data directory.
-
-```
-docker run -it -p 80:8080 \
-  --env SKIP_DEMO_DATA=true \
-  docker.osgeo.org/geoserver:2.21.1
-```
-
-### How to download and install additional extensions on startup?
-
-The ``startup.sh`` script allows some customization on startup:
-
-* ``INSTALL_EXTENSIONS`` to ``true`` to download and install extensions
-* ``STABLE_EXTENSIONS`` list of extensions to download and install
-* ``CORS_ENABLED``
-
-Example installing wps and ysld extensions:
-
-```
-docker run -it -p 80:8080 \
-  --env INSTALL_EXTENSIONS=true --env STABLE_EXTENSIONS="wps,ysld" \
-  docker.osgeo.org/geoserver:2.21.1
-```
-
-The list of extensions (taken from SourceForge download page):
-
-```
-app-schema   gdal            jp2k          ogr-wps          web-resource
-authkey      geofence        libjpeg-turbo oracle           wmts-multi-dimensional
-cas          geofence-server mapml         params-extractor wps-cluster-hazelcast
-charts       geopkg-output   mbstyle       printing         wps-cluster-hazelcast
-control-flow grib            mongodb       pyramid          wps-download
-css          gwc-s3          monitor       querylayer       wps-jdbc
-csw          h2              mysql         sldservice       wps
-db2          imagemap        netcdf-out    sqlserver        xslt
-dxf          importer        netcdf        vectortiles      ysld
-excel        inspire         ogr-wfs       wcs2_0-eo
-```
-
-### How to install additional extensions from local folder?
-
-If you want to add geoserver extensions/libs, place the respective jar files in a directory and mount it like
-
-```
-docker run -it -p 80:8080 \
-  --mount src="/dir/with/libs/on/host",target=/opt/additional_libs,type=bind \
-  docker.osgeo.org/geoserver:2.21.1
-```
-
-### How to add additional fonts to the docker image (e.g. for SLD styling)?
-
-If you want to add custom fonts (the base image only contains 26 fonts) by using a mount:
-
-```
-docker run -it -p 80:8080 \
-  --mount src="/dir/with/fonts/on/host",target=/opt/additional_fonts,type=bind \
-  docker.osgeo.org/geoserver:2.21.1
-```
-
-**Note:** Do not change the target value!
-
-## Troubleshooting
-
-### How to watch geoserver.log from host?
-
-To watch ``geoserver.log`` of a running container:
-
-```
-docker exec -it {CONTAINER_ID} tail -f /opt/geoserver_data/logs/geoserver.log
-```
-
-### How to use the docker-compose demo?
-
-The ``docker-compose-demo.yml`` to build with your own data directory and extensions.
-
-Stage geoserver data directory contents into ``geoserver_data``, and any extensions into ``additional_libs`` folder.
-
-Run ``docker-compose``:
-
-```
-docker-compose -f docker-compose-demo.yml up --build
-```
-
-## How to Build?
-
-
-### How to build a local image?
-
-```
-docker build -t {YOUR_TAG} .
-```
-
-### How to run local build?
-
-After building run using local tag:
-
-```
-docker run -it -p 80:8080 {YOUR_TAG}
-```
+For further configuration of your Geoserver setup, such as how to mount an external folder for use as a data 
+or how to start a GeoServer without sample data, or how to download and install additional extensions on startup, or how to install additional extensions from local folder and other custom build parameters please refer to the original repository that this is based on:https://github.com/geoserver/docker 
 
 ### How to build a specific GeoServer version?
 
-```
-docker build \
-  --build-arg GS_VERSION={YOUR_VERSION} \
-  -t {YOUR_TAG} .
-```
-
-### How to build with custom geoserver data directory?
-
-```
-docker build \
-  --build-arg GS_DATA_PATH={RELATIVE_PATH_TO_YOUR_GS_DATA} \
-  -t {YOUR_TAG} .
-```
-
-**Note:** The passed path **must not** be absolute! Instead, the path should be within the build context (e.g. next to the Dockerfile) and should be passed as a relative path, e.g. `GS_DATA_PATH=./my_data/`
-
-### Can a build use a specific GeoServer version AND custom data?
-
-Yes! Just pass the `--build-arg` param twice, e.g.
-
-```
-docker build \
-  --build-arg GS_VERSION={VERSION} \
-  --build-arg GS_DATA_PATH={PATH} \
-  -t {YOUR_TAG} .
-```
-
-### How to build with additional libs/extensions/plugins?
-
-Put your `*.jar` files (e.g. the WPS extension) in the `additional_libs` folder and build with one of the commands from above! (They will be copied to the GeoServer `WEB-INF/lib` folder during the build.)
-
-**Note:** Similar to the GeoServer data path from above, you can also configure the path to the additional libraries by passing the `ADDITIONAL_LIBS_PATH` argument when building:
-
-```
-docker build \
-  --build-arg ADDITIONAL_LIBS_PATH={RELATIVE_PATH_TO_YOUR_LIBS}
-  -t {YOUR_TAG} .
-```
-
-## How to release?
-
-### How to publish official release?
-
-OSGeo maintains geoserver-docker.osgeo.org repository for publishing. The results are combined into docker.osgeo.org repository alongside other software such as PostGIS.
-
-Build locally:
-```
-docker build -t geoserver-docker.osgeo.org/geoserver:2.21.1 .
-```
-
-Login using with osgeo user id:
-```
-docker login geoserver-docker.osgeo.org
-```
-
-Push to osgeo repository:
-```
-docker push geoserver-docker.osgeo.org/geoserver:2.21.1
-```
-
+You can specify a Geoserver version to use by changing the GS_VERSION value in the Dockerfile. 
 
 ## Authors and acknowledgment
 Special thanks to the contributors at https://github.com/geoserver/docker for creating this docker image
